@@ -18,11 +18,13 @@ func (p *Program) CreateUser(userName string) error {
 	if err != nil {
 		return err
 	}
-	user := NewUser("", name)
+	user, err := NewUser(name)
+	if err != nil {
+		return err
+	}
 	var userService = NewUserService(p.userRepository)
 	if userService.Exists(user) {
-		return errors.New(fmt.Sprintf("%s already exists"))
+		return errors.New(fmt.Sprintf("%s already exists", user.userId))
 	}
-	p.userRepository.Save(*user)
-	return nil
+	return p.userRepository.Save(*user)
 }

@@ -1,6 +1,9 @@
 package ddd_tutorial
 
-import "errors"
+import (
+	"errors"
+	"github.com/google/uuid"
+)
 
 // Entity
 type User struct {
@@ -8,8 +11,12 @@ type User struct {
 	name   UserName
 }
 
-func NewUser(id UserId, name UserName) *User {
-	return &User{userId: id, name: name}
+func NewUser(name UserName) (*User, error) {
+	id, err := uuid.NewRandom()
+	if err != nil {
+		return nil, err
+	}
+	return &User{userId: NewUserId(id.String()), name: name}, nil
 }
 
 func (u *User) Equal(other *User) bool {
