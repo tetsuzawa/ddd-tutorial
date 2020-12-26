@@ -5,22 +5,11 @@ import "errors"
 // Entity
 type User struct {
 	userId UserId `readonly`
-	name   string
+	name   UserName
 }
 
-func NewUser(id UserId, name string) (User, error) {
-	u := User{userId: id}
-	if err := u.ChangeName(name); err != nil {
-		return User{}, err
-	}
-	return u, nil
-}
-
-func (u *User) ChangeName(name string) error {
-	if len(name) < 3 {
-		return errors.New("first name length must be longer than 3")
-	}
-	return nil
+func NewUser(id UserId, name UserName) *User {
+	return &User{userId: id, name: name}
 }
 
 func (u *User) Equal(other *User) bool {
@@ -36,5 +25,23 @@ func (u *User) Equal(other *User) bool {
 type UserId string
 
 func NewUserId(v string) UserId {
-	return NewUserId(v)
+	return UserId(v)
+}
+
+type UserName string
+
+func NewUserName(v string) (UserName, error) {
+	var u UserName
+	if err := u.ChangeName(v); err != nil {
+		return "", err
+	}
+	return u, nil
+}
+
+func (u *UserName) ChangeName(name string) error {
+	if len(name) < 3 {
+		return errors.New("first name length must be longer than 3")
+	}
+	*u = UserName(name)
+	return nil
 }
